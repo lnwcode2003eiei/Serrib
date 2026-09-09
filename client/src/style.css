@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap");
+@import "tailwindcss";
+@theme {
+  --animate-reveal: reveal 450ms ease-out both;
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(14px) rotateY(70deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotateY(0);
+    }
+  }
+  --color-cream: #f8f5ed;
+  --color-ink: #30382d;
+  --color-forest: #2d432e;
+  --color-gold: #ad8136;
+  --color-muted: #7e8073;
+  --font-sans: "Noto Sans Thai", Tahoma, sans-serif;
+  --font-display: "Cormorant Garamond", "Noto Serif Thai", Georgia, serif;
+}
+@layer base {
+  body {
+    @apply m-0 bg-cream text-ink antialiased;
+  }
+  button,
+  a,
+  input,
+  select {
+    @apply transition-all duration-200;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  button:disabled {
+    @apply opacity-40 cursor-not-allowed;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    @apply outline-2 outline-offset-4 outline-gold;
+  }
+  input,
+  select {
+    @apply w-full rounded-lg border border-[#d8d5c9] bg-white/60 px-4 py-3 outline-none focus:border-gold focus:ring-2 focus:ring-gold/20;
+  }
+  label {
+    @apply block text-xs font-semibold tracking-wide mb-2;
+  }
+}
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-3 rounded-md bg-forest px-7 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-[#40573b] active:scale-[.98];
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-3 rounded-md border border-[#c5c5b4] bg-white/25 px-7 py-3.5 text-sm font-semibold hover:bg-white/80 active:scale-[.98];
+  }
+  .eyebrow {
+    @apply text-[10px] uppercase tracking-normal font-bold text-gold;
+  }
+  .panel {
+    @apply rounded-xl border border-[#dfddcf] bg-[#fffdf7] p-6;
+  }
+}
