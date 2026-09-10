@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Crown, Check, Shield, Coins, MessageCircle, Send } from "lucide-react";
 import type { Snapshot, Good, Act } from "../types/game";
 import { goodLabel } from "../types/goods";
+import { GoodsArtwork } from "./GoodsArtwork";
 export function PlayerList({ snap }: { snap: Snapshot }) {
   return (
     <div className="space-y-3">
@@ -44,12 +45,11 @@ export function PlayerList({ snap }: { snap: Snapshot }) {
             )}
           </div>
           {snap.room.status !== "lobby" && (
-            <div className="flex mt-3 justify-between text-xs text-muted">
+            <div className="flex mt-3 text-xs text-muted">
               <span className="flex gap-1.5 items-center">
                 <Coins size={13} className="text-gold" />
                 {p.coins} เหรียญ
               </span>
-              <span>{p.score} คะแนน</span>
             </div>
           )}
         </div>
@@ -63,7 +63,8 @@ export function Chat({ snap, act }: { snap: Snapshot; act: Act }) {
   useEffect(() => {
     // Some browsers return a Promise from scrolling. Effects must only return
     // a cleanup function or undefined, never the scrolling result.
-    end.current?.scrollIntoView({ block: "nearest" });
+    const list = end.current?.parentElement;
+    if (list) list.scrollTop = list.scrollHeight;
   }, [snap.room.messages.length]);
   return (
     <div className="panel">
@@ -71,7 +72,10 @@ export function Chat({ snap, act }: { snap: Snapshot; act: Act }) {
         <MessageCircle size={18} />
         แชตในโต๊ะ
       </h3>
-      <div className="h-44 overflow-y-auto my-4 space-y-3">
+      <div
+        className="h-44 max-md:h-[min(38dvh,20rem)] overflow-y-auto overscroll-contain my-4 space-y-3"
+        aria-live="polite"
+      >
         {!snap.room.messages.length && (
           <p className="text-xs text-muted leading-6">
             โต๊ะยังเงียบอยู่ ลองทักเพื่อนสักหน่อย
@@ -135,21 +139,15 @@ export function GoodCard({
       disabled={!onClick}
       aria-pressed={onClick ? !!selected : undefined}
       onClick={onClick}
-      className={`relative p-3 rounded-lg border text-center transition-transform enabled:hover:-translate-y-1 disabled:opacity-100 ${selected ? "border-gold bg-[#f8eccc] ring-1 ring-gold" : "border-[#dedbc9] bg-[#fbf8ed]"}`}
+      aria-label={`${goodLabel(good.name)} มูลค่า ${good.value} เหรียญ ค่าปรับ ${good.penalty} เหรียญ`}
+      className={`relative min-w-0 w-full overflow-hidden rounded-xl border-2 text-center transition-transform enabled:hover:-translate-y-1 disabled:opacity-100 ${selected ? "border-gold bg-[#f8eccc] ring-2 ring-gold shadow-lg" : "border-[#dedbc9] bg-[#fbf8ed]"}`}
     >
       {selected && (
-        <Check size={14} className="absolute right-1 top-1 text-forest" />
+        <span className="absolute right-1 top-9 z-10 rounded-full bg-forest p-1.5 text-white shadow-md">
+          <Check size={18} />
+        </span>
       )}
-      <div className="text-3xl my-2">{good.image}</div>
-      <div className="font-display text-lg font-bold">
-        {goodLabel(good.name)}
-      </div>
-      <div className="text-[9px] text-muted">
-        {good.value} เหรียญ · {good.type === "legal" ? "ถูกกฎหมาย" : "ต้องห้าม"}
-      </div>
-      <div className="text-[10px] text-muted mt-1">
-        ค่าปรับ {good.penalty} เหรียญ
-      </div>
+      <GoodsArtwork good={good} />
     </button>
   );
 }

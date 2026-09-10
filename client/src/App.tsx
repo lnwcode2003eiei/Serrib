@@ -116,7 +116,7 @@ export default function App() {
       {toast && (
         <div
           role="status"
-          className="fixed bottom-7 left-1/2 -translate-x-1/2 bg-forest text-white shadow-xl rounded-lg py-4 px-5 flex items-center gap-5 z-50 text-sm max-w-[90vw]"
+          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-7 left-1/2 -translate-x-1/2 bg-forest text-white shadow-xl rounded-lg py-4 px-5 flex items-center gap-5 z-50 text-sm w-max max-w-[90vw]"
         >
           {toast}
           <button onClick={() => setToast("")} aria-label="ปิดการแจ้งเตือน">

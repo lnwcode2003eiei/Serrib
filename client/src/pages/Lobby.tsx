@@ -14,15 +14,20 @@ export function Lobby({
 }) {
   const me = snap.room.players.find((p) => p.id === snap.playerId)!;
   const [copied, setCopied] = useState(false);
+  const [copyUnavailable, setCopyUnavailable] = useState(false);
   return (
     <Shell eyebrow="โต๊ะพร้อมแล้ว" title={snap.room.name}>
       <div className="flex flex-wrap gap-5 justify-between items-center mb-8">
         <button
-          onClick={() => {
-            navigator.clipboard.writeText(snap.room.id).then(() => {
+          onClick={async () => {
+            try {
+              if (!navigator.clipboard) throw Error("Clipboard unavailable");
+              await navigator.clipboard.writeText(snap.room.id);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
-            });
+            } catch {
+              setCopyUnavailable(true);
+            }
           }}
           className="btn-secondary text-xs"
         >
@@ -36,9 +41,24 @@ export function Lobby({
           {snap.room.demo ? " · โหมดฝึกเล่น" : ""}
         </span>
       </div>
-      <div className="grid md:grid-cols-[1fr_360px] gap-8">
+      {copyUnavailable && (
+        <div className="mb-5 text-sm">
+          <label htmlFor="copy-room">
+            แตะค้างบนรหัสเพื่อคัดลอก แล้วส่งให้เพื่อน
+          </label>
+          <input
+            id="copy-room"
+            readOnly
+            value={snap.room.id}
+            onFocus={(e) => e.target.select()}
+          />
+        </div>
+      )}
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-5 sm:gap-8">
         <div className="panel">
-          <h2 className="font-display text-3xl mb-5">พบเพื่อนร่วมโต๊ะ</h2>
+          <h2 className="font-display text-2xl sm:text-3xl mb-5">
+            พบเพื่อนร่วมโต๊ะ
+          </h2>
           <PlayerList snap={snap} />
           <div className="flex flex-wrap gap-3 mt-6">
             <button

@@ -1,5 +1,11 @@
 # Sheriff — multiplayer board game
 
+## เล่นบนมือถือ
+
+รัน `npm run dev` บนคอมพิวเตอร์ แล้วเชื่อมมือถือกับ Wi-Fi เดียวกัน เปิด URL ที่ขึ้นว่า `Network` ในหน้าต่างเซิร์ฟเวอร์ (ไม่ใช้ `localhost` บนมือถือ) ให้คอมพิวเตอร์และเซิร์ฟเวอร์เปิดอยู่ระหว่างเล่น ที่อยู่ Network อาจเปลี่ยนเมื่อย้ายเครือข่าย ลิงก์นี้ใช้ภายในเครือข่ายเดียวกัน ยังไม่ใช่เว็บไซต์สาธารณะ
+
+เมนูล่างสลับกระดาน ผู้เล่น ไพ่ในมือ และแชตได้ ในแผงไพ่สามารถเลือกทิ้งและกดจั่ว จากนั้นเลือกสินค้าและกดปิดถุงได้ทันที ปุ่มยืนยันติดด้านล่างของแผง พร้อมพื้นที่สำหรับขอบล่างหน้าจอ ช่องกรอกบนมือถือใช้ตัวอักษร 16px และรองรับการคัดลอกรหัสด้วยการเลือกข้อความเมื่อ Clipboard API ใช้ไม่ได้บน HTTP
+
 ## อัปเดตภาษาไทยและระบบจั่วการ์ด
 
 หน้าจอ กติกา ชื่อสินค้า เหตุการณ์ และข้อความแจ้งเตือนเป็นภาษาไทย มีสินค้า 12 ชนิด รวม 216 ใบ (ถูกกฎหมาย 6 ชนิด / ต้องห้าม 6 ชนิด) เพิ่มปลา น้ำผึ้ง ชาลักลอบ และอัญมณี
@@ -39,6 +45,8 @@ Each player is Sheriff once, with every other player taking a merchant turn. Dec
 Session credentials use a random secret in addition to the player ID. Per-tab session storage isolates players across tabs; local storage provides refresh/reopen recovery. Hands, bag contents, credentials, deck and private room passwords are excluded from other players’ snapshots. Server timers advance turns; clients cannot advance rounds themselves. If an active player disconnects, the table waits for their return. Empty inactive rooms expire after one hour.
 
 ## Deployment and extension
+
+ขั้นตอนนำขึ้น Vercel + Render แบบละเอียดอยู่ใน [DEPLOYMENT.md](./DEPLOYMENT.md) พร้อมไฟล์ตั้งค่าโฮสต์และคำสั่ง `npm run build:server` / `npm start` สำหรับเซิร์ฟเวอร์ production
 
 Set CLIENT_ORIGIN to comma-separated permitted browser origins. Set PORT for the server and VITE_SERVER_URL when the frontend connects directly instead of using the Vite proxy. Production hosting needs a long-running Node process with WebSocket support and a reverse proxy for `/socket.io`; a static frontend alone cannot host this multiplayer backend. Use HTTPS in production.
 

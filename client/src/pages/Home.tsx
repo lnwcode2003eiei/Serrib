@@ -47,7 +47,7 @@ export function Home({ demo, busy }: { demo: () => void; busy: boolean }) {
               เข้าร่วมห้อง
             </Link>
           </div>
-          <div className="flex items-center gap-5 mt-7 text-[10px] font-medium text-[#666f60]">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 mt-7 text-xs font-medium text-[#666f60]">
             <span className="flex items-center gap-1.5">
               <Users size={13} />
               ผู้เล่น 3–6 คน

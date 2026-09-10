@@ -7,7 +7,10 @@ import { thaiMessage } from "../../shared/messages.js";
 const app = express();
 const origins = (
   process.env.CLIENT_ORIGIN || "http://localhost:5173,http://127.0.0.1:5173"
-).split(",");
+).split(",").map((origin) => origin.trim()).filter(Boolean);
+if (process.env.NODE_ENV === "production" && !process.env.CLIENT_ORIGIN?.trim()) {
+  throw new Error("Set CLIENT_ORIGIN to the HTTPS frontend origin before starting production");
+}
 app.use(cors({ origin: origins }));
 app.get("/health", (_, res) => res.json({ ok: true }));
 const http = createServer(app);
@@ -176,6 +179,7 @@ setInterval(() => {
     )
       gm.rooms.delete(id);
 }, 60000).unref();
-http.listen(Number(process.env.PORT) || 3000, "0.0.0.0", () =>
-  console.log("Sheriff server http://localhost:3000"),
+const port = Number(process.env.PORT) || 3000;
+http.listen(port, "0.0.0.0", () =>
+  console.log(`Sheriff server listening on port ${port}`),
 );

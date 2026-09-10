@@ -31,7 +31,7 @@
     @apply transition-all duration-200;
   }
   button {
-    @apply cursor-pointer;
+    @apply cursor-pointer touch-manipulation;
   }
   button:disabled {
     @apply opacity-40 cursor-not-allowed;
@@ -59,6 +59,23 @@
     @apply text-[10px] uppercase tracking-normal font-bold text-gold;
   }
   .panel {
-    @apply rounded-xl border border-[#dfddcf] bg-[#fffdf7] p-6;
+    @apply min-w-0 rounded-xl border border-[#dfddcf] bg-[#fffdf7] p-4 sm:p-6;
+  }
+}
+/* Keep controls readable and prevent iOS focus zoom on small screens. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+  button,
+  a.btn-primary,
+  a.btn-secondary {
+    min-height: 44px;
+  }
+  .btn-primary,
+  .btn-secondary {
+    padding-inline: 1rem;
   }
 }

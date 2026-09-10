@@ -108,12 +108,14 @@ export function Shell({
   children: ReactNode;
 }) {
   return (
-    <main className="max-w-[1120px] mx-auto px-6 py-12">
+    <main className="max-w-[1120px] mx-auto px-4 sm:px-6 py-6 sm:py-12">
       <Link to="/" className="text-xs text-muted inline-flex mb-8">
         ← กลับหน้าตลาด
       </Link>
       <p className="eyebrow">{eyebrow}</p>
-      <h1 className="font-display text-5xl font-semibold mt-3 mb-9">{title}</h1>
+      <h1 className="font-display text-3xl sm:text-5xl leading-relaxed break-words font-semibold mt-3 mb-6 sm:mb-9">
+        {title}
+      </h1>
       {children}
     </main>
   );

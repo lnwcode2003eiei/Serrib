@@ -35,12 +35,22 @@ export function Game({
   const [selection, setSelection] = useState<string[]>([]),
     [discardSelection, setDiscardSelection] = useState<string[]>([]),
     [drawing, setDrawing] = useState(false),
+    [sealing, setSealing] = useState(false),
     [declaration, setDeclaration] = useState("Apple"),
     [bribe, setBribe] = useState(0),
     [tab, setTab] = useState("game");
   const turn = me.id === m?.id;
   const drawPhase = r.phase === "DRAW";
   const drawCount = HAND_SIZE - me.handCount + discardSelection.length;
+  async function sealBag() {
+    setSealing(true);
+    try {
+      const result = await act("seal_bag", { ids: selection });
+      if (result?.ok) setTab("game");
+    } finally {
+      setSealing(false);
+    }
+  }
   async function drawCards() {
     setDrawing(true);
     try {
@@ -51,11 +61,13 @@ export function Game({
     }
   }
   return (
-    <main className="max-w-[1380px] mx-auto px-5 py-8 pb-24">
+    <main className="max-w-[1380px] mx-auto px-3 sm:px-5 py-4 sm:py-8 pb-[calc(6rem+env(safe-area-inset-bottom))]">
       <div className="flex flex-wrap justify-between gap-4 items-center mb-7">
         <div>
           <p className="eyebrow">{r.demo ? "โต๊ะฝึกเล่น" : r.id}</p>
-          <h1 className="font-display text-3xl mt-1">{r.name}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl mt-1 break-words">
+            {r.name}
+          </h1>
         </div>
         <div className="flex flex-wrap gap-6 text-xs text-muted">
           <span>
@@ -74,7 +86,7 @@ export function Game({
           <button onClick={leave}>ออกจากโต๊ะ</button>
         </div>
       </div>
-      <div className="grid md:grid-cols-[230px_1fr] xl:grid-cols-[230px_1fr_290px] gap-5">
+      <div className="grid md:grid-cols-[230px_minmax(0,1fr)] xl:grid-cols-[230px_minmax(0,1fr)_290px] gap-4 sm:gap-5">
         <aside className={`${tab !== "players" ? "hidden md:block" : ""}`}>
           <h2 className="eyebrow mb-4">ผู้เล่นในโต๊ะ</h2>
           <PlayerList snap={snap} />
@@ -93,8 +105,8 @@ export function Game({
           </div>
         </aside>
         <section className={`${tab === "players" ? "hidden md:block" : ""}`}>
-          <div className="panel min-h-[420px] text-center bg-[#eff0e5]">
-            <div className="flex justify-between items-center">
+          <div className="panel min-h-[320px] sm:min-h-[420px] text-center bg-[#eff0e5]">
+            <div className="flex flex-wrap gap-2 justify-between items-center">
               <p className="eyebrow">ด่านตรวจของนายอำเภอ</p>
               <span className="text-[9px] text-muted rounded-full border border-[#cdd1bc] px-3 py-1">
                 {phaseLabels[r.phase] ?? r.phase}
@@ -105,7 +117,7 @@ export function Game({
                 <Shield size={45} strokeWidth={1} />
               </div>
             </div>
-            <h2 className="font-display text-4xl mt-4">
+            <h2 className="font-display text-2xl sm:text-4xl leading-relaxed mt-4 break-words">
               {r.phase === "INSPECTION_RESULT"
                 ? "ผลการตัดสินมาแล้ว"
                 : turn
@@ -180,8 +192,14 @@ export function Game({
             {turn && r.phase === "SELECT_GOODS" && (
               <div className="mt-8">
                 <button
-                  onClick={() => act("seal_bag", { ids: selection })}
-                  disabled={!selection.length}
+                  className="btn-secondary w-full mb-3 md:hidden"
+                  onClick={() => setTab("inventory")}
+                >
+                  เลือกสินค้าในมือ · {selection.length} / 5 ใบ
+                </button>
+                <button
+                  onClick={sealBag}
+                  disabled={!selection.length || sealing}
                   className="btn-primary"
                 >
                   <LockKeyhole size={16} />
@@ -221,6 +239,7 @@ export function Game({
                 <input
                   aria-label="จำนวนสินบน"
                   type="number"
+                  inputMode="numeric"
                   min={0}
                   max={me.coins}
                   value={bribe}
@@ -275,7 +294,7 @@ export function Game({
                   {r.revealed.map((c, index) => (
                     <div
                       key={c.id}
-                      className="motion-safe:animate-reveal"
+                      className="motion-safe:animate-reveal w-36 sm:w-40"
                       style={{ animationDelay: `${index * 180}ms` }}
                     >
                       <GoodCard good={c} />
@@ -316,15 +335,16 @@ export function Game({
           <button
             onClick={() => setTab("game")}
             aria-label="ปิดแผง"
-            className="md:hidden fixed inset-0 bottom-16 z-10 bg-ink/40 backdrop-blur-sm"
+            className="md:hidden fixed inset-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-10 bg-ink/40 backdrop-blur-sm"
           />
         )}
         <aside
-          className={`md:col-start-2 xl:col-start-auto ${tab === "inventory" || tab === "chat" ? "max-md:fixed max-md:inset-x-0 max-md:bottom-16 max-md:z-20 max-md:max-h-[78dvh] max-md:overflow-y-auto max-md:rounded-t-2xl max-md:bg-cream max-md:p-4 max-md:shadow-2xl" : ""}`}
+          aria-label={tab === "chat" ? "แผงแชต" : "แผงไพ่ในมือ"}
+          className={`min-w-0 md:col-start-2 xl:col-start-auto ${tab === "inventory" || tab === "chat" ? "max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-md:z-20 max-md:max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] max-md:overflow-y-auto max-md:overscroll-contain max-md:rounded-t-2xl max-md:bg-cream max-md:p-3 max-md:shadow-2xl" : ""}`}
         >
           {(tab === "inventory" || tab === "chat") && (
             <button
-              className="md:hidden flex ml-auto mb-3 items-center gap-2 text-xs"
+              className="md:hidden flex ml-auto mb-2 items-center gap-2 text-sm min-h-11 px-3"
               onClick={() => setTab("game")}
             >
               กลับกระดาน <X size={16} />
@@ -389,12 +409,43 @@ export function Game({
               </div>
             )}
           </div>
+          {tab === "inventory" &&
+            turn &&
+            (drawPhase || r.phase === "SELECT_GOODS") && (
+              <div className="md:hidden sticky bottom-0 z-10 bg-cream border-t border-[#d8d9ca] p-3 -mx-3 -mb-3 shadow-lg">
+                <p className="text-sm text-center mb-2" aria-live="polite">
+                  {drawPhase
+                    ? `เลือกทิ้ง ${discardSelection.length} / ${MAX_EXCHANGE} ใบ`
+                    : `สินค้าในถุง ${selection.length} / 5 ใบ`}
+                </p>
+                <button
+                  className="btn-primary w-full"
+                  disabled={
+                    drawing || sealing || (!drawPhase && !selection.length)
+                  }
+                  onClick={drawPhase ? drawCards : sealBag}
+                >
+                  {drawPhase
+                    ? drawing
+                      ? "กำลังจั่ว…"
+                      : drawCount
+                        ? `จั่ว ${drawCount} ใบ แล้วจัดถุง`
+                        : "เก็บไพ่เดิม · ไปจัดถุง"
+                    : sealing
+                      ? "กำลังปิดถุง…"
+                      : `ปิดถุง ${selection.length} ใบ`}
+                </button>
+              </div>
+            )}
           <div className={`mt-5 ${tab !== "chat" ? "hidden md:block" : ""}`}>
             <Chat snap={snap} act={act} />
           </div>
         </aside>
       </div>
-      <nav className="fixed bottom-0 inset-x-0 flex justify-around py-3 bg-cream border-t border-[#d8d9ca] md:hidden z-30">
+      <nav
+        aria-label="เมนูเกมบนมือถือ"
+        className="fixed bottom-0 inset-x-0 flex h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-cream border-t border-[#d8d9ca] md:hidden z-30"
+      >
         {[
           { id: "game", Icon: Shield },
           { id: "players", Icon: Users },
@@ -403,7 +454,8 @@ export function Game({
         ].map(({ id, Icon }) => (
           <button
             onClick={() => setTab(id)}
-            className={`flex flex-col items-center gap-1 text-[9px] uppercase ${tab === id ? "text-forest" : "text-muted"}`}
+            aria-current={tab === id ? "page" : undefined}
+            className={`flex flex-1 min-w-0 min-h-11 flex-col justify-center items-center gap-1 text-xs ${tab === id ? "text-forest bg-forest/5 font-semibold" : "text-muted"}`}
             key={id}
           >
             <Icon size={20} />
@@ -431,32 +483,34 @@ export function Game({
                 .map((p) => p.name)
                 .join(" & ")}
             </h2>
-            <table className="w-full text-xs text-left my-6">
-              <thead className="text-muted">
-                <tr>
-                  <th className="p-2">พ่อค้า</th>
-                  <th>เหรียญ</th>
-                  <th>สินค้า</th>
-                  <th>โบนัส</th>
-                  <th>รวม</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...r.players]
-                  .sort((a, b) => b.score - a.score)
-                  .map((p, i) => (
-                    <tr className="border-t border-[#e3ddce]" key={p.id}>
-                      <td className="p-3">
-                        {i + 1}. {p.avatar} {p.name}
-                      </td>
-                      <td>{p.coins}</td>
-                      <td>{p.score - p.coins - p.bonus}</td>
-                      <td>{p.bonus}</td>
-                      <td className="font-bold">{p.score}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[360px] text-xs text-left my-6">
+                <thead className="text-muted">
+                  <tr>
+                    <th className="p-2">พ่อค้า</th>
+                    <th>เหรียญ</th>
+                    <th>สินค้า</th>
+                    <th>โบนัส</th>
+                    <th>รวม</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...r.players]
+                    .sort((a, b) => b.score - a.score)
+                    .map((p, i) => (
+                      <tr className="border-t border-[#e3ddce]" key={p.id}>
+                        <td className="p-3">
+                          {i + 1}. {p.avatar} {p.name}
+                        </td>
+                        <td>{p.coins}</td>
+                        <td>{p.score - p.coins - p.bonus}</td>
+                        <td>{p.bonus}</td>
+                        <td className="font-bold">{p.score}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
             {me.isHost ? (
               <button
                 className="btn-primary"

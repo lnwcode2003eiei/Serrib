@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 const clients = [];
 const connect = () =>
   new Promise((resolve, reject) => {
-    const s = io("http://localhost:3000", {
+    const s = io(process.env.TEST_SERVER_URL || "http://localhost:3000", {
       forceNew: true,
       reconnection: false,
     });
