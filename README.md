@@ -8,7 +8,7 @@
 
 ## อัปเดตภาษาไทยและระบบจั่วการ์ด
 
-หน้าจอ กติกา ชื่อสินค้า เหตุการณ์ และข้อความแจ้งเตือนเป็นภาษาไทย มีสินค้า 12 ชนิด รวม 216 ใบ (ถูกกฎหมาย 6 ชนิด / ต้องห้าม 6 ชนิด) เพิ่มปลา น้ำผึ้ง ชาลักลอบ และอัญมณี
+หน้าจอ กติกา ชื่อสินค้า เหตุการณ์ และข้อความแจ้งเตือนเป็นภาษาไทย มีสินค้า 12 ชนิด เริ่มต้น 216 ใบ และเพิ่มตามจำนวนผู้เล่นเมื่อเกิน 6 คน (ถูกกฎหมาย 6 ชนิด / ต้องห้าม 6 ชนิด) เพิ่มปลา น้ำผึ้ง ชาลักลอบ และอัญมณี
 
 เริ่มเกมด้วยไพ่ 8 ใบ ก่อนจัดถุงในแต่ละเทิร์นสามารถเลือกทิ้ง 0–3 ใบ แล้วกดจั่วเติมให้ครบ 8 ใบได้ครั้งเดียว ถ้าไม่ทิ้งและมีครบแล้ว กดเก็บไพ่เดิมเพื่อไปต่อ เซิร์ฟเวอร์ตรวจสิทธิ์และจำนวนการ์ด กองทิ้งจะถูกสับกลับเมื่อกองจั่วหมด โดยยังไม่รวมการ์ดที่เพิ่งทิ้งในคำสั่งเดียวกัน ผู้เล่นอื่นเห็นเฉพาะจำนวนในกอง ไม่เห็นหน้าไพ่หรือลำดับการ์ด
 
@@ -34,7 +34,7 @@ npm install
 npm run dev
 ```
 
-Create a room, then join its code from other browser windows with different names. All players must mark Ready. The host starts with 3–6 players. Practice mode creates three server-controlled merchants and is disabled when NODE_ENV=production.
+Create a room, then join its code from other browser windows with different names. All players must mark Ready. The host starts with 3–12 players. Practice mode creates three server-controlled merchants and is disabled when NODE_ENV=production.
 
 `npm run build` checks TypeScript and builds the frontend. `npm test` verifies game rules and privacy. With the server running, `node server/src/multiplayer.test.mjs` checks three real socket connections.
 

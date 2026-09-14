@@ -50,7 +50,7 @@ export function Home({ demo, busy }: { demo: () => void; busy: boolean }) {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3 mt-7 text-xs font-medium text-[#666f60]">
             <span className="flex items-center gap-1.5">
               <Users size={13} />
-              ผู้เล่น 3–6 คน
+              ผู้เล่น 3–12 คน
             </span>
             <span className="w-1 h-1 rounded-full bg-[#b9b9a6]" />
             <span className="flex items-center gap-1.5">

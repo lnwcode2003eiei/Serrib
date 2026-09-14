@@ -222,3 +222,54 @@ test("rejoin requires secret token and host transfers on disconnect", () => {
   assert.equal(player.socketId, "new");
   assert.equal(player.isConnected, true);
 });
+test("large tables scale cards by actual attendance and complete maximum bags", () => {
+  for (const count of [3, 6, 7, 8, 9, 10, 11, 12]) {
+    const gm = new GameManager();
+    assert.throws(() =>
+      gm.create("bad", { playerName: "Bad", roomName: "Bad", maxPlayers: 13 }),
+    );
+    const { room, player } = gm.create("p0", {
+      playerName: "P0",
+      roomName: "Large",
+      maxPlayers: 12,
+    });
+    for (let i = 1; i < count; i++)
+      gm.join("p" + i, { roomId: room.id, playerName: "P" + i });
+    if (count === 12)
+      assert.throws(() =>
+        gm.join("extra", { roomId: room.id, playerName: "Extra" }),
+      );
+    room.players.forEach((p) => {
+      p.isReady = true;
+      assert.ok(p.avatar);
+    });
+    gm.start(room, player);
+    const cards = [...room.deck, ...room.players.flatMap((p) => p.hand)];
+    assert.equal(cards.length, gm.deck(count).length);
+    assert.equal(new Set(cards.map((c) => c.id)).size, cards.length);
+    if (count <= 6) assert.equal(cards.length, 216);
+    if (count === 12) assert.equal(cards.length, 954);
+    let turns = 0;
+    const sheriffs = new Set();
+    while (room.status === "playing") {
+      sheriffs.add(room.currentSheriffId);
+      const m = room.players.find((p) => p.id === room.currentMerchantId)!;
+      const s = room.players.find((p) => p.id === room.currentSheriffId)!;
+      gm.action(room, m, "draw_cards", {
+        ids: m.hand.slice(0, 3).map((c) => c.id),
+      });
+      assert.equal(m.hand.length, 8);
+      gm.action(room, m, "seal_bag", {
+        ids: m.hand.slice(0, 5).map((c) => c.id),
+      });
+      gm.action(room, m, "declare_goods", { good: "Apple", quantity: 5 });
+      gm.action(room, m, "offer_bribe", { amount: 0 });
+      gm.action(room, s, "accept_bag");
+      gm.advance(room);
+      assert.ok(++turns <= count * (count - 1));
+    }
+    assert.equal(turns, count * (count - 1));
+    assert.equal(sheriffs.size, count);
+    assert.ok(room.winner);
+  }
+});

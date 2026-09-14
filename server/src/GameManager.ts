@@ -42,8 +42,8 @@ export class GameManager {
     check(
       Number.isInteger(data.maxPlayers) &&
         data.maxPlayers >= 3 &&
-        data.maxPlayers <= 6,
-      "Choose 3–6 players",
+        data.maxPlayers <= 12,
+      "Choose 3–12 players",
     );
     const salt = uuid();
     const password = data.isPrivate
@@ -94,7 +94,7 @@ export class GameManager {
       token: uuid(),
       socketId,
       name,
-      avatar: ["🧔🏻", "👩🏽", "🧑🏻", "👨🏾", "👩🏻‍🦰", "🧔🏽"][room.players.length],
+      avatar: ["🧔🏻", "👩🏽", "🧑🏻", "👨🏾", "👩🏻‍🦰", "🧔🏽"][room.players.length % 6],
       coins: 50,
       score: 50,
       bonus: 0,
@@ -206,10 +206,15 @@ export class GameManager {
       },
     };
   }
-  deck() {
+  deck(playerCount = 6) {
     const cards: Good[] = [];
     GOODS.forEach(({ name, value, penalty, icon: image, type, copies }) => {
-      for (let j = 0; j < copies; j++)
+      for (
+        let j = 0;
+        j <
+        Math.ceil(copies * Math.max(1, (playerCount * (playerCount - 1)) / 30));
+        j++
+      )
         cards.push({
           id: uuid(),
           name,
@@ -250,7 +255,7 @@ export class GameManager {
     r.status = "playing";
     r.round = 1;
     r.maxRounds = r.players.length;
-    r.deck = this.deck();
+    r.deck = this.deck(r.players.length);
     r.discardPile = [];
     r.winner = undefined;
     r.eventLog = [];

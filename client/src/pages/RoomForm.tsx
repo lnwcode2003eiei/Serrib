@@ -86,12 +86,16 @@ export function RoomForm({
               <div>
                 <label htmlFor="maxPlayers">จำนวนผู้เล่นสูงสุด</label>
                 <select id="maxPlayers" name="maxPlayers" defaultValue="6">
-                  {[3, 4, 5, 6].map((n) => (
+                  {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
                     <option key={n} value={n}>
                       {n} คน
                     </option>
                   ))}
                 </select>
+                <p className="text-sm text-muted mt-2">
+                  กองไพ่เพิ่มตามจำนวนผู้เล่นจริงเมื่อเริ่มเกม: 3–6 คนใช้ 216 ใบ
+                  สูงสุด 954 ใบสำหรับ 12 คน
+                </p>
               </div>
               <button
                 type="button"
@@ -147,7 +151,7 @@ export function RoomForm({
               พ่อค้าทุกคนมีความลับ
             </h2>
             <p className="text-sm mt-4 text-cream/75">
-              ส่งรหัสห้องให้เพื่อนอีก 2–5 คน
+              ส่งรหัสห้องให้เพื่อนอีก 2–11 คน
               <br />
               นายอำเภอกำลังรอพบคุณ
             </p>

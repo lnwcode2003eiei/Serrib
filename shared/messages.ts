@@ -4,7 +4,7 @@ const messages: Record<string, string> = {
   "Room is full": "ห้องเต็มแล้ว",
   "Incorrect password": "รหัสผ่านไม่ถูกต้อง",
   "Player name is already taken": "มีผู้เล่นใช้ชื่อนี้แล้ว",
-  "Choose 3–6 players": "เลือกจำนวนผู้เล่น 3–6 คน",
+  "Choose 3–12 players": "เลือกจำนวนผู้เล่น 3–12 คน",
   "Join a room first": "กรุณาเข้าห้องก่อน",
   "Your session has expired":
     "ห้องหรือการเชื่อมต่อเดิมหมดอายุ กรุณาสร้างหรือเข้าห้องใหม่",
